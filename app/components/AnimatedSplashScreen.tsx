@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font';
 const AnimatedSplashScreen: React.FC = () => {
   const letterSpacing = useRef(new Animated.Value(1)).current;
   const textGlow = useRef(new Animated.Value(0)).current;
+  const backgroundGlow = useRef(new Animated.Value(0)).current;
   const fadeOut = useRef(new Animated.Value(1)).current;
 
   const appName = "SILVAR";
@@ -13,7 +14,6 @@ const AnimatedSplashScreen: React.FC = () => {
   const letterAnimations = useRef(
     letters.map(() => ({
       opacity: new Animated.Value(0),
-      translateY: new Animated.Value(-20)
     }))
   ).current;
 
@@ -26,66 +26,64 @@ const AnimatedSplashScreen: React.FC = () => {
 
     Animated.sequence([
       Animated.timing(letterSpacing, {
-        toValue: 3,
+        toValue: 2,
         duration: 600,
         useNativeDriver: false,
       }),
-      Animated.loop(
-        Animated.sequence([
+    ]).start();
+
+    Animated.loop(
+      Animated.sequence([
+        Animated.parallel([
           Animated.timing(textGlow, {
-            toValue: 8,
+            toValue: 20,
             duration: 1500,
             useNativeDriver: false,
           }),
-          Animated.timing(textGlow, {
-            toValue: 2,
+          Animated.timing(backgroundGlow, {
+            toValue: 0.3,
             duration: 1500,
             useNativeDriver: false,
           }),
         ]),
-        { iterations: -1 }
-      ),
-    ]).start();
+        Animated.parallel([
+          Animated.timing(textGlow, {
+            toValue: 5,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+          Animated.timing(backgroundGlow, {
+            toValue: 0.1,
+            duration: 1500,
+            useNativeDriver: false,
+          }),
+        ]),
+      ])
+    ).start();
+  }, [fontsLoaded]);
+
+  useEffect(() => {
+    if (!fontsLoaded) return;
 
     setTimeout(() => {
       const letterAnimationSequences: Animated.CompositeAnimation[] = letters.map((_, index) => 
-        Animated.parallel([
-          Animated.timing(letterAnimations[index].opacity, {
-            toValue: 1,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-          Animated.timing(letterAnimations[index].translateY, {
-            toValue: 0,
-            duration: 800,
-            useNativeDriver: true,
-          }),
-        ])
+        Animated.timing(letterAnimations[index].opacity, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: true,
+        })
       );
 
       Animated.sequence([
         Animated.parallel(letterAnimationSequences),
-        Animated.delay(2000),
-        Animated.parallel([
-          Animated.timing(fadeOut, {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(textGlow, {
-            toValue: 0,
-            duration: 1000,
-            useNativeDriver: false,
-          }),
-          Animated.timing(letterSpacing, {
-            toValue: 1,
-            duration: 1000,
-            useNativeDriver: false,
-          }),
-        ]),
+        Animated.delay(1000),
+        Animated.timing(fadeOut, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
       ]).start();
     }, 100);
-
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
@@ -96,39 +94,36 @@ const AnimatedSplashScreen: React.FC = () => {
     <View className="flex-1 bg-black items-center justify-center">
       <Animated.View 
         style={{
-          opacity: fadeOut,
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          opacity: backgroundGlow,
         }}
-      >
-        <View className="flex-row items-center justify-center">
-          {letters.map((letter, index) => (
-            <Animated.View
-              key={index + letter}
-              style={[
-                {
-                  opacity: letterAnimations[index].opacity,
-                  transform: [
-                    { translateY: letterAnimations[index].translateY }
-                  ],
-                }
-              ]}
+      />
+      <View className="flex-row items-center justify-center">
+        {letters.map((letter, index) => (
+          <Animated.View
+            key={index + letter}
+            style={{
+              opacity: Animated.multiply(letterAnimations[index].opacity, fadeOut),
+            }}
+          >
+            <Animated.Text
+              className="text-white text-8xl font-bright"
+              style={{
+                fontFamily: 'BrightDemo',
+                textShadowColor: 'rgba(255, 255, 255, 0.8)',
+                textShadowOffset: { width: 0, height: 0 },
+                textShadowRadius: textGlow,
+                marginHorizontal: letterSpacing,
+              }}
             >
-              <Animated.Text
-                className="text-white text-8xl font-bright shadow-white shadow-lg"
-                style={[
-                  {
-                    fontFamily: 'BrightDemo',
-                    textShadowOffset: { width: 0, height: 0 },
-                    textShadowRadius: textGlow,
-                    marginHorizontal: letterSpacing,
-                  }
-                ]}
-              >
-                {letter}
-              </Animated.Text>
-            </Animated.View>
-          ))}
-        </View>
-      </Animated.View>
+              {letter}
+            </Animated.Text>
+          </Animated.View>
+        ))}
+      </View>
     </View>
   );
 }

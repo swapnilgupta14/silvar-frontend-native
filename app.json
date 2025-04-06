@@ -1,13 +1,16 @@
 {
   "expo": {
-    "name": "app-expo",
-    "slug": "app-expo",
-    "version": "1.0.0",
+    "name": "Silvar",
+    "slug": "silvar",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/silvar_1024.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "splash": {
       "image": "./assets/images/silvar_1024.png",
       "resizeMode": "contain",
@@ -20,19 +23,24 @@
         "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
-      "bundleIdentifier": "com.anonymous.appexpo"
+      "bundleIdentifier": "com.silvar.app",
+      "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/silvar_1024.png",
+        "backgroundColor": "#000000"
       },
       "splash": {
         "image": "./assets/images/silvar_1024.png",
         "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
-      "package": "com.anonymous.appexpo"
+      "package": "com.silvar.app",
+      "versionCode": 1,
+      "enableProguardInReleaseBuilds": true,
+      "enableShrinkResources": true,
+      "enableDexGuard": false
     },
     "web": {
       "bundler": "metro",

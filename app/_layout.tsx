@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import "./styles/global.css"
-import { Slot } from 'expo-router';
 import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Stack } from 'expo-router';
 import AnimatedSplashScreen from './components/AnimatedSplashScreen';
+import AuthProvider from './context/AuthContext';
 
 SplashScreen.preventAutoHideAsync().catch(() => {
   /* ignore errors */
@@ -46,7 +48,7 @@ export default function RootLayout(): JSX.Element {
     if (appIsReady) {
       const timer = setTimeout(() => {
         setShowAnimatedSplash(false);
-      }, 3500);
+      }, 2500);
       
       return () => clearTimeout(timer);
     }
@@ -57,12 +59,21 @@ export default function RootLayout(): JSX.Element {
   }
 
   return (
-    <View className="flex-1" onLayout={onLayoutRootView}>
-      {showAnimatedSplash ? (
-        <AnimatedSplashScreen />
-      ) : (
-        <Slot />
-      )}
-    </View>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <View className="flex-1" onLayout={onLayoutRootView}>
+          {showAnimatedSplash ? (
+            <AnimatedSplashScreen />
+          ) : (
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: 'black' },
+              }}
+            />
+          )}
+        </View>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
