@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+# Add permissions block
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -57,10 +62,22 @@ jobs:
         path: android/app/build/outputs/apk/release/app-release.apk
         retention-days: 5
     
+    - name: Create Tag
+      if: github.ref == 'refs/heads/main'
+      id: tag
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        TAG="v$(date +'%Y%m%d-%H%M%S')"
+        git tag -a $TAG -m "Release $TAG"
+        git push origin $TAG
+        echo "tag=$TAG" >> $GITHUB_OUTPUT
+    
     - name: Create Release
       if: github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ steps.tag.outputs.tag }}
         files: android/app/build/outputs/apk/release/app-release.apk
         generate_release_notes: true
         draft: false
