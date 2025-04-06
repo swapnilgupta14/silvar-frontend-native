@@ -19,7 +19,8 @@
         "image": "./assets/images/silvar_1024.png",
         "resizeMode": "contain",
         "backgroundColor": "#000000"
-      }
+      },
+      "bundleIdentifier": "com.anonymous.appexpo"
     },
     "android": {
       "adaptiveIcon": {
@@ -30,7 +31,8 @@
         "image": "./assets/images/silvar_1024.png",
         "resizeMode": "contain",
         "backgroundColor": "#000000"
-      }
+      },
+      "package": "com.anonymous.appexpo"
     },
     "web": {
       "bundler": "metro",
