@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import Link from 'expo-router/link';
-import { useAuth } from '../context/AuthContext';
-import { Ionicons } from '@expo/vector-icons';
+import React from "react";
+import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Link from "expo-router/link";
+import { useAuth } from "@/src/context/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function HomeScreen() {
   const { user } = useAuth();
@@ -15,14 +15,17 @@ export default function HomeScreen() {
         <View className="p-4">
           <View className="flex-row justify-between items-center">
             <Text className="text-white-smoke text-xl font-semibold mt-2">
-              {user ? `Hello, ${user.name}!` : 'Sign in to access your profile'}
-            </Text>            <Link href={user ? "/screens/ProfileScreen" : "/screens/auth/LoginScreen"} asChild>
+              {user ? `Hello, ${user?.username}!` : "Sign in to access your profile"}
+            </Text>
+            <Link
+              href={(user ? "/(tabs)/profile" : "/(auth)/login") as any}
+              asChild
+            >
               <TouchableOpacity className="bg-soft-slate-gray p-2 rounded-full">
                 <Ionicons name="person-outline" size={24} color="#E5E7EB" />
               </TouchableOpacity>
             </Link>
           </View>
-
         </View>
 
         {/* Featured Section */}
@@ -32,7 +35,7 @@ export default function HomeScreen() {
           </Text>
           <View className="bg-accent rounded-xl shadow-sm overflow-hidden">
             <Image
-              source={{ uri: 'https://picsum.photos/400/200' }}
+              source={{ uri: "https://picsum.photos/400/200" }}
               className="w-full h-48"
             />
             <View className="p-4">
@@ -52,7 +55,7 @@ export default function HomeScreen() {
             Categories
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {['Category 1', 'Category 2', 'Category 3', 'Category 4'].map(
+            {["Category 1", "Category 2", "Category 3", "Category 4"].map(
               (category, index) => (
                 <TouchableOpacity
                   key={index + category}
@@ -78,8 +81,12 @@ export default function HomeScreen() {
             >
               <View className="w-16 h-16 bg-soft-slate-gray rounded-lg mr-4" />
               <View className="flex-1">
-                <Text className="text-white-smoke font-medium">Item {item}</Text>
-                <Text className="text-silver-mist mt-1">Description of item {item}</Text>
+                <Text className="text-white-smoke font-medium">
+                  Item {item}
+                </Text>
+                <Text className="text-silver-mist mt-1">
+                  Description of item {item}
+                </Text>
               </View>
               <TouchableOpacity>
                 <Ionicons name="chevron-forward" size={24} color="#E5E7EB" />
@@ -90,4 +97,4 @@ export default function HomeScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-} 
+}
