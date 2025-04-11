@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'expo-router';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '../src/context/AuthContext';
 import Animated from 'react-native-reanimated';
 import { Text } from 'react-native';
 

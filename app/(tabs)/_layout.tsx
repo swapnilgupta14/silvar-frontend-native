@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "@/src/context/AuthContext";
+import { useAuth } from "../../src/context/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
 import { Tabs, useRouter } from "expo-router";

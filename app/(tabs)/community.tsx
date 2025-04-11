@@ -1,7 +1,7 @@
 // src/app/(tabs)/community.tsx
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { useAuth } from '@/src/context/AuthContext';
+import { useAuth } from '../../src/context/AuthContext';
 import { useRouter } from 'expo-router';
 
 export default function Community() {
