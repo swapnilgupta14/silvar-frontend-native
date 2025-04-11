@@ -1,64 +1,65 @@
-// src/app/[auth]/forgot-password.tsx
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useAuth } from '@/src/context/AuthContext';
-import { Link } from 'expo-router';
-import Input from '@/src/components/Input';
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Link } from "expo-router";
+import { Mail } from "lucide-react-native";
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { forgotPassword } = useAuth();
-
-  const handleForgotPassword = async () => {
-    if (!email) {
-      alert('Please enter your email');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await forgotPassword(email);
-    } catch (error) {
-      alert('Failed to process request: ' + (error instanceof Error ? error.message : 'Unknown error'));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [email, setEmail] = useState("");
 
   return (
-    <View className="flex-1 justify-center p-6 bg-black">
-      <Text className="text-3xl font-bold mb-8 text-center">Forgot Password</Text>
-      
-      <Text className="text-gray-600 mb-6 text-center">
-        Enter your email address to receive a password reset link
-      </Text>
-      
-      <Input
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      
-      <TouchableOpacity 
-        className="bg-cyan-600 p-4 rounded-lg mt-6" 
-        onPress={handleForgotPassword}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-white text-center font-bold">Reset Password</Text>
-        )}
-      </TouchableOpacity>
-        
-        <Link href="../login" asChild>
-        <TouchableOpacity className="mt-6">
-          <Text className="text-cyan-600 text-center">Back to Login</Text>
-        </TouchableOpacity>
-      </Link>
+    <View className="flex-1 bg-black">
+      {/* Top Logo Section */}
+      <View className="h-[64%] items-center pt-12 pb-6 flex justify-center">
+        <View className="w-32 h-32 bg-[#2C2C2C] rounded-full items-center justify-center shadow-lg">
+          <Text className="text-white text-3xl font-bold">DEI</Text>
+        </View>
+      </View>
+
+      {/* Bottom Card Section */}
+      <View className="flex-1 bg-white rounded-t-[42px] px-6">
+        <View className="py-6">
+          <Text className="text-2xl font-bold text-center text-gray-800">
+            Reset Password
+          </Text>
+          <Text className="text-sm text-center text-gray-500 mt-2">
+            Enter your phone number to receive a reset code
+          </Text>
+        </View>
+
+        <View className="flex flex-col gap-3">
+          <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
+            <View className="bg-white/80 p-2 rounded-xl mr-3">
+              <Mail size={20} color="gray" />
+            </View>
+            <TextInput
+              className="flex-1 text-base text-gray-800"
+              placeholder="Enter your email"
+              placeholderTextColor="#9CA3AF"
+              keyboardType="email-address"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
+
+          {/* Reset Button */}
+          <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
+            <Text className="text-white text-center font-semibold text-lg">
+              Send Reset Code
+            </Text>
+          </TouchableOpacity>
+
+          {/* Back to Sign In */}
+          <View className="flex-row justify-center mt-5">
+            <Link href="/(auth)/login" asChild>
+              <TouchableOpacity>
+                <Text className="text-black font-semibold underline">
+                  Back to Sign In
+                </Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
+        </View>
+      </View>
     </View>
   );
 }

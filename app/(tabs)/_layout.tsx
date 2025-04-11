@@ -49,11 +49,26 @@ export default function TabsLayout() {
   const { user } = useAuth();
 
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: "#0891b2" }}>
+    <Tabs 
+      screenOptions={{ 
+        tabBarActiveTintColor: "#F0BB78",
+        tabBarInactiveTintColor: "#ffffff",
+        tabBarStyle: {
+          backgroundColor: "#000000",
+          borderTopWidth: 0,
+          elevation: 10,
+          shadowOpacity: 0,
+          height: 64,
+          paddingBottom: 6,
+          paddingTop: 10,
+        },
+        headerShown: false,
+      }}
+    >
       <Tabs.Screen
         name="home"
         options={{
-          title: "Home",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="home" size={24} color={color} />
           ),
@@ -62,7 +77,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: "Explore",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="compass" size={24} color={color} />
           ),
@@ -71,7 +86,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="search"
         options={{
-          title: "Search",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="search" size={24} color={color} />
           ),
@@ -80,7 +95,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="community"
         options={{
-          title: "Community",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="users" size={24} color={color} />
           ),
@@ -92,7 +107,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "",
           tabBarIcon: ({ color }) => (
             <FontAwesome name="user" size={24} color={color} />
           ),

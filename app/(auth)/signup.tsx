@@ -1,92 +1,163 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useAuth } from '@/src/context/AuthContext';
-import { Link } from 'expo-router';
-import Input from '@/src/components/Input';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from "react-native";
+import { Link } from "expo-router";
+import { Eye, EyeOff, Phone, Lock, User, Mail, Check } from "lucide-react-native";
 
 export default function SignUp() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signUp } = useAuth();
-
-  const handleSignUp = async () => {
-    if (!username || !email || !password || !confirmPassword) {
-      alert('Please fill in all fields');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      await signUp(email, password, username);
-    } catch (error) {
-      alert('Failed to sign up: ' + (error instanceof Error ? error.message : 'Unknown error'));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   return (
-    <View className="flex-1 justify-center p-6 bg-black">
-      <Text className="text-3xl font-bold mb-8 text-center">Sign Up</Text>
-      
-      <Input
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        autoCapitalize="none"
-      />
-      
-      <Input
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      
-      <Input
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
-      
-      <Input
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-        autoCapitalize="none"
-      />
-      
-      <TouchableOpacity 
-        className="bg-cyan-600 p-4 rounded-lg mt-6" 
-        onPress={handleSignUp}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="white" />
-        ) : (
-          <Text className="text-white text-center font-bold">Sign Up</Text>
-        )}
-      </TouchableOpacity>
-      
-      <View className="flex-row justify-center mt-6">
-        <Text className="text-gray-600">Already have an account? </Text>
-        <Link href="/(auth)/login" asChild>
-          <TouchableOpacity>
-            <Text className="text-cyan-600 font-bold">Login</Text>
+    <View className="flex-1 bg-black">
+      <View className="h-[30%] items-center pt-12 pb-6 flex justify-center">
+        <View className="w-32 h-32 bg-[#2C2C2C] rounded-full items-center justify-center shadow-lg">
+          <Text className="text-white text-3xl font-bold">DEI</Text>
+        </View>
+      </View>
+
+      <View className="flex-1 bg-white rounded-t-[42px]">
+        <ScrollView
+          className="flex-1 px-6"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        >
+          <View className="py-6">
+            <Text className="text-2xl font-bold text-center text-gray-800">
+              Create your account
+            </Text>
+          </View>
+
+          <View className="flex flex-col gap-4">
+            <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
+              <View className="bg-white/80 p-2 rounded-xl mr-3">
+                <User size={20} color="gray" />
+              </View>
+              <TextInput
+                className="flex-1 text-base text-gray-800"
+                placeholder="Full Name"
+                placeholderTextColor="#9CA3AF"
+                value={fullName}
+                onChangeText={setFullName}
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
+              <View className="bg-white/80 p-2 rounded-xl mr-3">
+                <Mail size={20} color="gray" />
+              </View>
+              <TextInput
+                className="flex-1 text-base text-gray-800"
+                placeholder="Email Address"
+                placeholderTextColor="#9CA3AF"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
+              <View className="bg-white/80 p-2 rounded-xl mr-3">
+                <Phone size={20} color="gray" />
+              </View>
+              <TextInput
+                className="flex-1 text-base text-gray-800"
+                placeholder="Phone Number"
+                placeholderTextColor="#9CA3AF"
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
+                keyboardType="phone-pad"
+              />
+            </View>
+
+            <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
+              <View className="bg-white/80 p-2 rounded-xl mr-3">
+                <Lock size={20} color="gray" />
+              </View>
+              <TextInput
+                className="flex-1 text-base text-gray-800"
+                placeholder="Create Password"
+                placeholderTextColor="#9CA3AF"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={setPassword}
+              />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                className="mr-2"
+                disabled={password.length === 0}
+              >
+                {showPassword ? (
+                  <Eye size={20} color="gray" />
+                ) : (
+                  <EyeOff size={20} color="gray" />
+                )}
+              </Pressable>
+            </View>
+
+            <TouchableOpacity
+              className="flex-row items-center my-2"
+              onPress={() => setAgreeToTerms(!agreeToTerms)}
+            >
+              <View
+                className={`w-5 h-5 rounded border mr-2 items-center justify-center ${
+                  agreeToTerms ? "bg-black border-black" : "border-gray-400"
+                }`}
+              >
+                {agreeToTerms && <Check size={12} color="white" strokeWidth={3} />}
+              </View>
+              <Text className="text-gray-600 flex-1 text-sm">
+                I agree to the{" "}
+                <Text className="text-black font-semibold underline">
+                  Terms of Service
+                </Text>{" "}
+                and{" "}
+                <Text className="text-black font-semibold underline">
+                  Privacy Policy
+                </Text>
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
+            <Text className="text-white text-center font-semibold text-lg">
+              Create Account
+            </Text>
           </TouchableOpacity>
-        </Link>
+
+          <View className="flex-row items-center my-6">
+            <View className="flex-1 h-[1px] bg-gray-200" />
+            <Text className="text-gray-400 mx-4 text-sm">OR</Text>
+            <View className="flex-1 h-[1px] bg-gray-200" />
+          </View>
+
+          <TouchableOpacity className="flex-row items-center justify-center bg-gray-100 p-4 rounded-2xl border border-gray-200">
+            <Text className="text-gray-700 font-medium">
+              Continue with Google
+            </Text>
+          </TouchableOpacity>
+
+          <View className="flex-row justify-center mt-5">
+            <Text className="text-gray-600">Already have an account? </Text>
+            <Link href="/(auth)/login" asChild>
+              <TouchableOpacity>
+                <Text className="text-black font-semibold underline">Sign In</Text>
+              </TouchableOpacity>
+            </Link>
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
