@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { Mail } from "lucide-react-native";
 
 export default function ForgotPassword() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
 
   return (
@@ -50,13 +51,11 @@ export default function ForgotPassword() {
 
           {/* Back to Sign In */}
           <View className="flex-row justify-center mt-5">
-            <Link href="/(auth)/login" asChild>
-              <TouchableOpacity>
-                <Text className="text-black font-semibold underline">
-                  Back to Sign In
-                </Text>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity onPress={() => router.replace('/login')}>
+              <Text className="text-black font-semibold underline">
+                Back to Sign In
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

@@ -18,6 +18,6 @@ export default function Index() {
     );
   }
 
-  // Always redirect to home screen
+  // Always redirect to home screen (public route)
   return <Redirect href="/(tabs)/home" />;
 }

@@ -5,10 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { Link } from "expo-router";
+import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
 
 export default function Login() {
+  const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -68,13 +69,14 @@ export default function Login() {
           </View>
         </View>
 
-        <Link href="/forgot-password" asChild>
-          <TouchableOpacity className="mt-4">
-            <Text className="text-right text-gray-600 font-normal">
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
-        </Link>
+        <TouchableOpacity 
+          onPress={() => router.replace('/forgot-password')}
+          className="mt-4"
+        >
+          <Text className="text-right text-gray-600 font-normal">
+            Forgot Password?
+          </Text>
+        </TouchableOpacity>
 
         <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
           <Text className="text-white text-center font-semibold text-lg">
@@ -96,13 +98,11 @@ export default function Login() {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Don't have an account? </Text>
-          <Link href="/signup" asChild>
-            <TouchableOpacity>
-              <Text className="text-black underline font-semibold">
-                Sign Up
-              </Text>
-            </TouchableOpacity>
-          </Link>
+          <TouchableOpacity onPress={() => router.replace('/signup')}>
+            <Text className="text-black underline font-semibold">
+              Sign Up
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
