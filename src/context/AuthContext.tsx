@@ -8,7 +8,6 @@ import React, {
   useCallback,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as FileSystem from 'expo-file-system';
 import { Alert } from "react-native";
 
 type User = {
@@ -38,27 +37,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const loadUser = async () => {
       try {
-        // Ensure the directory exists
-        const dirInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'ExponentExperienceData');
-        if (!dirInfo.exists) {
-          await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'ExponentExperienceData', {
-            intermediates: true
-          });
-        }
-        
         const userData = await AsyncStorage.getItem("user");
         if (userData) {
           setUser(JSON.parse(userData));
         }
       } catch (error) {
         console.error("Failed to load user data:", error);
-        // Handle the error gracefully - you might want to show an error message to the user
-        if (error instanceof Error) {
-          Alert.alert(
-            "Error",
-            "Failed to access storage. Please ensure the app has necessary permissions."
-          );
-        }
+        Alert.alert(
+          "Error",
+          "Failed to load user data. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }

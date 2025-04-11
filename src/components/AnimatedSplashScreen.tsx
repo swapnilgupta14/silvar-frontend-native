@@ -1,7 +1,6 @@
 // src/components/AnimatedSplashScreen.tsx
 import React, { useEffect, useState } from 'react';
 import { View, Text, Animated } from 'react-native';
-import { useAuth } from '../context/AuthContext';
 
 type AnimatedSplashScreenProps = {
   children: React.ReactNode;
@@ -9,21 +8,22 @@ type AnimatedSplashScreenProps = {
 
 const AnimatedSplashScreen: React.FC<AnimatedSplashScreenProps> = ({ children }) => {
   const [isAppReady, setIsAppReady] = useState(false);
-  const { isLoading } = useAuth();
   const fadeAnim = new Animated.Value(1);
 
   useEffect(() => {
-    if (!isLoading) {
-      // Once auth is ready, trigger fade out animation
+    // Show splash screen for 2 seconds
+    const timer = setTimeout(() => {
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 1000,
+        duration: 500, // Fade out animation duration
         useNativeDriver: true,
       }).start(() => {
         setIsAppReady(true);
       });
-    }
-  }, [isLoading]);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [fadeAnim]);
 
   if (isAppReady) {
     return <>{children}</>;
