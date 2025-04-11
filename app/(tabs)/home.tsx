@@ -4,9 +4,45 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Link from "expo-router/link";
 import { useAuth } from "../../src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useToast } from "../../src/components/ToastProvider";
 
 export default function HomeScreen() {
   const { user } = useAuth();
+  const { showToast } = useToast();
+
+  const handleTestToast = () => {
+    // Show different types of toasts in sequence
+    showToast('Welcome!', {
+      description: 'You have successfully logged in',
+      type: 'success',
+      image: {
+        type: 'icon',
+        source: 'checkmark-circle-outline'
+      }
+    });
+
+    setTimeout(() => {
+      showToast('New Message', {
+        description: 'You have 3 unread messages',
+        type: 'info',
+        image: {
+          type: 'icon',
+          source: 'mail-outline'
+        }
+      });
+    }, 3500);
+
+    setTimeout(() => {
+      showToast('Error', {
+        description: 'Failed to load data. Please try again.',
+        type: 'error',
+        image: {
+          type: 'icon',
+          source: 'alert-circle-outline'
+        }
+      });
+    }, 7000);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-black">
@@ -17,14 +53,22 @@ export default function HomeScreen() {
             <Text className="text-off-white text-2xl font-bright">
               {user ? `Hello, ${user?.username}!` : "Welcome"}
             </Text>
-            <Link
-              href={(user ? "/(tabs)/profile" : "/(auth)/login") as any}
-              asChild
-            >
-              <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">
-                <Ionicons name="person-outline" size={24} color="#EEEEEE" />
+            <View className="flex-row space-x-2">
+              <TouchableOpacity 
+                onPress={handleTestToast}
+                className="bg-secondary-bg p-3 rounded-full"
+              >
+                <Ionicons name="notifications-outline" size={24} color="#EEEEEE" />
               </TouchableOpacity>
-            </Link>
+              <Link
+                href={(user ? "/(tabs)/profile" : "/(auth)/login") as any}
+                asChild
+              >
+                <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">
+                  <Ionicons name="person-outline" size={24} color="#EEEEEE" />
+                </TouchableOpacity>
+              </Link>
+            </View>
           </View>
         </View>
 

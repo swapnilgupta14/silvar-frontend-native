@@ -68,16 +68,6 @@ jobs:
         env:
           GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
 
-      - name: Check APK Size
-        run: |
-          APK_SIZE=$(stat -f%z android/app/build/outputs/apk/release/app-release.apk)
-          APK_SIZE_MB=$(echo "scale=2; $APK_SIZE/1024/1024" | bc)
-          echo "APK_SIZE_MB=$APK_SIZE_MB" >> $GITHUB_ENV
-          echo "APK size: ${APK_SIZE_MB}MB"
-          if (( $(echo "$APK_SIZE_MB > 100" | bc -l) )); then
-            echo "::warning::APK size is larger than 100MB"
-          fi
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
@@ -106,7 +96,6 @@ jobs:
           draft: false
           prerelease: false
           body: |
-            APK Size: ${APK_SIZE_MB}MB
             Build Time: ${{ steps.build.outputs.time }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

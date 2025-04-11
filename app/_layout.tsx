@@ -3,6 +3,8 @@ import React from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import AnimatedSplashScreen from "../src/components/AnimatedSplashScreen";
+import { ToastProvider } from "../src/components/ToastProvider";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 function RootLayoutNav() {
   const { user, isLoading } = useAuth();
@@ -55,8 +57,12 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   return (
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <AuthProvider>
+        <ToastProvider>
+          <RootLayoutNav />
+        </ToastProvider>
+      </AuthProvider>
+    </GestureHandlerRootView>
   );
 }
