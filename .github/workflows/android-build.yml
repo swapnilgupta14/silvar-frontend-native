@@ -49,11 +49,34 @@ jobs:
           echo "keyAlias=my-key-alias" >> android/keystore.properties
           echo "storeFile=my-release-key.keystore" >> android/keystore.properties
 
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: Build Android
+        id: build
         run: |
           npx expo prebuild
           cd android
           ./gradlew assembleRelease
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+
+      - name: Check APK Size
+        run: |
+          APK_SIZE=$(stat -f%z android/app/build/outputs/apk/release/app-release.apk)
+          APK_SIZE_MB=$(echo "scale=2; $APK_SIZE/1024/1024" | bc)
+          echo "APK_SIZE_MB=$APK_SIZE_MB" >> $GITHUB_ENV
+          echo "APK size: ${APK_SIZE_MB}MB"
+          if (( $(echo "$APK_SIZE_MB > 100" | bc -l) )); then
+            echo "::warning::APK size is larger than 100MB"
+          fi
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -63,18 +86,18 @@ jobs:
           retention-days: 5
 
       - name: Create Tag
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.build.outcome == 'success'
         id: tag
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          TAG="silvar-v$('%Y%m%d-%H%M%S')"
+          TAG="v$(date +'%Y%m%d-%H%M%S')"
           git tag -a $TAG -m "Release $TAG"
           git push origin $TAG
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Create Release
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && steps.build.outcome == 'success'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
@@ -82,6 +105,16 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
+          body: |
+            APK Size: ${APK_SIZE_MB}MB
+            Build Time: ${{ steps.build.outputs.time }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          rm -f android/app/my-release-key.keystore
+          rm -f android/keystore.properties
+          rm -rf ~/.gradle/caches/
+          rm -rf ~/.gradle/wrapper/
