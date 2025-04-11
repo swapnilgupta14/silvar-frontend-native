@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import Input from '@/src/components/Input';
+import Input from '../../src/components/Input';
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
