@@ -113,7 +113,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       await AsyncStorage.removeItem("user");
       setUser(null);
-      router.replace("/(auth)/login");
+      router.replace("/auth?type=signin");
     } catch (error) {
       console.error("Sign out error:", error);
     } finally {
@@ -125,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (email: string) => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        router.replace("/(auth)/login");
+        router.replace("/auth?type=signin");
       } catch (error) {
         console.error("Forgot password error:", error);
         throw error;

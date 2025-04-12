@@ -7,11 +7,11 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
-import { useAuthWithToast } from "../../src/hooks/useAuthWithToast";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
   const router = useRouter();
-  const { signIn } = useAuthWithToast();
+  const { signIn } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -80,7 +80,7 @@ export default function Login() {
         </View>
 
         <TouchableOpacity 
-          onPress={() => router.replace('/forgot-password')}
+          onPress={() => router.replace('/auth?type=forgot-password')}
           className="mt-4"
         >
           <Text className="text-right text-gray-600 font-normal">
@@ -111,7 +111,7 @@ export default function Login() {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.replace('/signup')}>
+          <TouchableOpacity onPress={() => router.replace('/auth?type=signup')}>
             <Text className="text-black underline font-semibold">
               Sign Up
             </Text>

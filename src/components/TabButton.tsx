@@ -42,7 +42,7 @@ export const TabButton = ({
     if (user) {
       router.push(`/(tabs)/${route}` as any);
     } else {
-      router.push("/(auth)/login" as any);
+      router.push("/auth?type=signin");
     }
   };
 

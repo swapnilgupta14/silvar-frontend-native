@@ -30,14 +30,21 @@ const ProtectedTabButton = ({
 
 type TabRoute = "community" | "profile";
 
-const TabButton = ({ user, route, ...props }: { user: any; route: TabRoute } & Omit<ProtectedTabButtonProps, 'user' | 'onPress'>) => {
+const TabButton = ({
+  user,
+  route,
+  ...props
+}: { user: any; route: TabRoute } & Omit<
+  ProtectedTabButtonProps,
+  "user" | "onPress"
+>) => {
   const router = useRouter();
-  
+
   const handlePress = () => {
     if (user) {
       router.push(`/(tabs)/${route}` as any);
     } else {
-      router.push("/(auth)/login" as any);
+      router.push("/auth?type=signin");
     }
   };
 
@@ -53,8 +60,8 @@ export default function TabsLayout() {
   }
 
   return (
-    <Tabs 
-      screenOptions={{ 
+    <Tabs
+      screenOptions={{
         tabBarActiveTintColor: "#F0BB78",
         tabBarInactiveTintColor: "#ffffff",
         tabBarStyle: {

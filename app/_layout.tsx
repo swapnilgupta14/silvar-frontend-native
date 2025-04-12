@@ -1,5 +1,5 @@
 import "../src/styles/global.css";
-import React from "react";
+import React, { useEffect } from "react";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import { ToastProvider } from "../src/components/ToastProvider";
@@ -10,16 +10,17 @@ function RootLayoutNav() {
   const segments = useSegments();
   const router = useRouter();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isLoading) return;
-    
-    const isProtectedRoute = segments[1] === "community" || segments[1] === "profile";
-    const inAuthGroup = segments[0] === "(auth)";
+
+    const isProtectedRoute =
+      segments[1] === "community" || segments[1] === "profile";
+    const inAuthGroup = segments[0] === "auth";
 
     if (!user && isProtectedRoute) {
-      router.replace("/(auth)/login");
+      router.push("/auth?type=signin");
     } else if (user && inAuthGroup) {
-      router.replace("/(tabs)/home");
+      router.push("/(tabs)/home");
     }
   }, [user, isLoading, segments]);
 
@@ -27,7 +28,7 @@ function RootLayoutNav() {
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+      <Stack.Screen name="auth" options={{ headerShown: false }} />
       <Stack.Screen name="+not-found" options={{ headerShown: false }} />
     </Stack>
   );

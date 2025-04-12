@@ -61,7 +61,7 @@ export default function HomeScreen() {
                 <Ionicons name="notifications-outline" size={24} color="#EEEEEE" />
               </TouchableOpacity>
               <Link
-                href={(user ? "/(tabs)/profile" : "/(auth)/login") as any}
+                href={(user ? "/(tabs)/profile" : "/auth?type=signin") as any}
                 asChild
               >
                 <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">
