@@ -48,7 +48,7 @@ export default function ForgotPassword() {
 
           <View className="flex-row justify-center mt-5">
             <TouchableOpacity 
-              onPress={() => router.replace('/auth?type=signin')}
+              onPress={() => router.push('/auth?type=signin')}
               className="flex-row items-center space-x-2"
             >
               <ArrowLeft size={12} color="black"/>

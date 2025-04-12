@@ -11,7 +11,7 @@ export default function Profile() {
   // Additional security to prevent access even if someone bypasses tab routing
   useEffect(() => {
     if (!user) {
-      router.replace('/auth?type=signin' as any);
+      router.push('/auth?type=signin' as any);
     }
   }, [user]);
 

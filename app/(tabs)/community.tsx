@@ -11,7 +11,7 @@ export default function Community() {
   // Additional security to prevent access even if someone bypasses tab routing
   useEffect(() => {
     if (!user) {
-      router.replace('/auth?type=signin');
+      router.push('/auth?type=signin');
     }
   }, [user]);
 

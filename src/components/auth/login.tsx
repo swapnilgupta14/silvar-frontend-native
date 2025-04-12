@@ -80,7 +80,7 @@ export default function Login() {
         </View>
 
         <TouchableOpacity 
-          onPress={() => router.replace('/auth?type=forgot-password')}
+          onPress={() => router.push('/auth?type=forgot-password')}
           className="mt-4"
         >
           <Text className="text-right text-gray-600 font-normal">
@@ -111,7 +111,7 @@ export default function Login() {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.replace('/auth?type=signup')}>
+          <TouchableOpacity onPress={() => router.push('/auth?type=signup')}>
             <Text className="text-black underline font-semibold">
               Sign Up
             </Text>
