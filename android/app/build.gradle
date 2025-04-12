@@ -65,7 +65,8 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = true
+def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInReleaseBuilds') ?: false).toBoolean()
+
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
  *
@@ -98,6 +99,11 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        
+        // Add this for proper handling of deep links and navigation
+        manifestPlaceholders = [
+            'appAuthRedirectScheme': 'com.anonymous.appexpo'
+        ]
     }
     signingConfigs {
         debug {
@@ -118,21 +124,40 @@ android {
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
+            // Enable debugging in debug builds
+            debuggable true
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
-            shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
+            
+            // Add these configurations for better production performance
+            shrinkResources true
+            crunchPngs true
+            
+            // Add these to ensure proper handling of navigation in release builds
+            ndk {
+                abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
+            }
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-            crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
         }
     }
     packagingOptions {
         jniLibs {
             useLegacyPackaging (findProperty('expo.useLegacyPackaging')?.toBoolean() ?: false)
         }
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+        pickFirst '**/libfbjni.so'
+        pickFirst '**/libreactnativejni.so'
+        pickFirst '**/libreactnativeblob.so'
+        pickFirst '**/libreactnativeutilsjni.so'
+        pickFirst '**/libglog.so'
+        pickFirst '**/libhermes.so'
+        pickFirst '**/libhermes-executor-debug.so'
+        pickFirst '**/libhermes-executor-release.so'
     }
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
@@ -186,4 +211,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Add these dependencies for better navigation support
+    implementation "androidx.core:core-ktx:1.9.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
 }

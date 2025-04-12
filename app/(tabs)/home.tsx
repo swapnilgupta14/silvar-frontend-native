@@ -11,7 +11,6 @@ export default function HomeScreen() {
   const { showToast } = useToast();
 
   const handleTestToast = () => {
-    // Show different types of toasts in sequence
     showToast('Welcome!', {
       description: 'You have successfully logged in',
       type: 'success',
@@ -113,7 +112,6 @@ export default function HomeScreen() {
           </ScrollView>
         </View>
 
-        {/* Recent Items */}
         <View className="p-4">
           <Text className="text-xl font-bright text-off-white mb-4">
             Recent Items
