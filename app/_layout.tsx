@@ -32,12 +32,15 @@ function RootLayoutNav() {
   const router = useRouter();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading) {
+      // Wait for auth state to be determined
+      return;
+    }
 
     try {
-      const isProtectedRoute =
-        segments[1] === "community" || segments[1] === "profile";
       const inAuthGroup = segments[0] === "auth";
+      const isProtectedRoute = segments[1] === "community" || segments[1] === "profile";
+      const isHomeRoute = segments[1] === "home";
 
       console.log("Navigation check:", {
         user: !!user,
@@ -46,21 +49,56 @@ function RootLayoutNav() {
         segments
       });
 
-      if (!user && isProtectedRoute) {
-        router.push("/auth?type=signin");
-      } else if (user && inAuthGroup) {
-        router.push("/(tabs)/home");
+      // If user is not authenticated
+      if (!user) {
+        if (isProtectedRoute) {
+          // Redirect to sign in if trying to access protected route
+          router.replace("/auth?type=signin");
+        } else if (inAuthGroup) {
+          // Allow access to auth routes
+          return;
+        }
+      } 
+      // If user is authenticated
+      else {
+        if (inAuthGroup) {
+          // Redirect to home if trying to access auth routes
+          router.replace("/(tabs)/home");
+        } else if (!segments.length || isHomeRoute) {
+          // Ensure home is the default route
+          router.replace("/(tabs)/home");
+        }
       }
     } catch (error) {
       console.error("Navigation error:", error);
     }
   }, [user, isLoading, segments, router]);
 
+  // Show loading state while auth is being determined
+  if (isLoading) {
+    return null; // Or a loading screen component
+  }
+
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="auth" options={{ headerShown: false }} />
+      <Stack.Screen 
+        name="auth" 
+        options={{ 
+          headerShown: false,
+          animation: 'slide_from_right',
+          gestureEnabled: true
+        }} 
+      />
+      <Stack.Screen 
+        name="notification" 
+        options={{ 
+          headerShown: false,
+          animation: 'slide_from_right',
+          gestureEnabled: true
+        }} 
+      />
       <Stack.Screen name="+not-found" options={{ headerShown: false }} />
     </Stack>
   );

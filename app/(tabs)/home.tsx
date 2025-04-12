@@ -5,10 +5,12 @@ import Link from "expo-router/link";
 import { useAuth } from "../../src/context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useToast } from "../../src/components/ToastProvider";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const { user } = useAuth();
   const { showToast } = useToast();
+  const router = useRouter();
 
   const handleTestToast = () => {
     showToast('Welcome!', {
@@ -43,6 +45,10 @@ export default function HomeScreen() {
     }, 7000);
   };
 
+  const handleNotificationPress = () => {
+    router.push('/notification' as any);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-black">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -54,7 +60,7 @@ export default function HomeScreen() {
             </Text>
             <View className="flex-row space-x-2">
               <TouchableOpacity 
-                onPress={handleTestToast}
+                onPress={handleNotificationPress}
                 className="bg-secondary-bg p-3 rounded-full"
               >
                 <Ionicons name="notifications-outline" size={24} color="#EEEEEE" />
