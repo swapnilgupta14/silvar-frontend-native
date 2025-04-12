@@ -16,15 +16,25 @@ import {
   Mail,
   Check,
 } from "lucide-react-native";
+import { useAuthWithToast } from "../../src/hooks/useAuthWithToast";
 
 export default function SignUp() {
   const router = useRouter();
+  const { signUp } = useAuthWithToast();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+
+  const handleSignUp = async () => {
+    try {
+      await signUp(fullName, email, password);
+    } catch (error) {
+      // Error is already handled by useAuthWithToast
+    }
+  };
 
   return (
     <View className="flex-1 bg-black">
@@ -136,7 +146,10 @@ export default function SignUp() {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
+        <TouchableOpacity 
+          className="bg-black mt-6 rounded-full p-4 shadow-sm"
+          onPress={handleSignUp}
+        >
           <Text className="text-white text-center font-semibold text-lg">
             Create Account
           </Text>

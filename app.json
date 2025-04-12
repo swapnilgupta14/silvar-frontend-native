@@ -11,29 +11,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "splash": {
-      "image": "./assets/images/silvar_1024.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
-    },
     "ios": {
       "supportsTablet": true,
-      "splash": {
-        "image": "./assets/images/silvar_1024.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#000000"
-      },
       "bundleIdentifier": "com.silvar.app",
       "buildNumber": "1.0.0"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/silvar_1024.png",
-        "backgroundColor": "#000000"
-      },
-      "splash": {
-        "image": "./assets/images/silvar_1024.png",
-        "resizeMode": "contain",
         "backgroundColor": "#000000"
       },
       "package": "com.silvar.app",
@@ -49,16 +34,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-font",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/silvar_1024.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#000000"
-        }
-      ]
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true

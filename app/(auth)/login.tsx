@@ -7,12 +7,22 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
+import { useAuthWithToast } from "../../src/hooks/useAuthWithToast";
 
 export default function Login() {
   const router = useRouter();
+  const { signIn } = useAuthWithToast();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleSignIn = async () => {
+    try {
+      await signIn(phoneNumber, password);
+    } catch (error) {
+      // Error is already handled by useAuthWithToast
+    }
+  };
 
   return (
     <View className="flex-1 bg-black">
@@ -78,7 +88,10 @@ export default function Login() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
+        <TouchableOpacity 
+          className="bg-black mt-6 rounded-full p-4 shadow-sm"
+          onPress={handleSignIn}
+        >
           <Text className="text-white text-center font-semibold text-lg">
             Sign In
           </Text>
@@ -90,7 +103,7 @@ export default function Login() {
           <View className="flex-1 h-[1px] bg-gray-200" />
         </View>
 
-        <TouchableOpacity className="flex-row items-center justify-center bg-gray-100 p-4 rounded-2xl border border-gray-100">
+        <TouchableOpacity className="flex-row items-center justify-center bg-gray-100 p-4 rounded-full border border-gray-200">
           <Text className="text-gray-700 font-medium">
             Continue with Google
           </Text>

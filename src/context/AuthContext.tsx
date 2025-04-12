@@ -8,7 +8,6 @@ import React, {
   useCallback,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Alert } from "react-native";
 
 type User = {
   id: string;
@@ -43,10 +42,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       } catch (error) {
         console.error("Failed to load user data:", error);
-        Alert.alert(
-          "Error",
-          "Failed to load user data. Please try again."
-        );
       } finally {
         setIsLoading(false);
       }
@@ -130,8 +125,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     async (email: string) => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        console.log(`Password reset email sent to: ${email}`);
-        alert(`Password reset link sent to ${email}`);
         router.replace("/(auth)/login");
       } catch (error) {
         console.error("Forgot password error:", error);

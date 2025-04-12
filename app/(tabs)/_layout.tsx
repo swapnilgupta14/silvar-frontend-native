@@ -37,7 +37,6 @@ const TabButton = ({ user, route, ...props }: { user: any; route: TabRoute } & O
     if (user) {
       router.push(`/(tabs)/${route}` as any);
     } else {
-      alert("Please sign in to access this feature");
       router.push("/(auth)/login" as any);
     }
   };
