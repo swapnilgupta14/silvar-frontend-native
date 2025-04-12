@@ -133,6 +133,7 @@ android {
             signingConfig signingConfigs.release
             
             // Add these configurations for better production performance
+            minifyEnabled true
             shrinkResources true
             crunchPngs true
             
@@ -140,7 +141,6 @@ android {
             ndk {
                 abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
             }
-            minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
