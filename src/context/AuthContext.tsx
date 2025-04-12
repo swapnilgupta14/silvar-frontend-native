@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import React, {
   createContext,
   useState,
@@ -18,30 +17,36 @@ type User = {
 type AuthContextType = {
   user: User | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, username: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  forgotPassword: (email: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<boolean>;
+  signUp: (email: string, password: string, username: string) => Promise<boolean>;
+  signOut: () => Promise<boolean>;
+  forgotPassword: (email: string) => Promise<boolean>;
 };
+
+const USER_STORAGE_KEY = "user";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadUser = async () => {
       try {
-        const userData = await AsyncStorage.getItem("user");
+        const userData = await AsyncStorage.getItem(USER_STORAGE_KEY);
         if (userData) {
           setUser(JSON.parse(userData));
         }
       } catch (error) {
         console.error("Failed to load user data:", error);
+        try {
+          await AsyncStorage.removeItem(USER_STORAGE_KEY);
+        } catch (clearError) {
+          console.error("Failed to clear corrupted user data:", clearError);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -51,24 +56,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const signIn = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string): Promise<boolean> => {
       setIsLoading(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        if (email.trim() && password.trim()) {
-          const mockUser = {
-            id: "123",
-            email,
-            username: email.split("@")[0],
-          };
-
-          await AsyncStorage.setItem("user", JSON.stringify(mockUser));
-          setUser(mockUser);
-          router.push("/(tabs)/home");
-        } else {
-          throw new Error("Invalid credentials");
+        if (!email.trim() || !password.trim()) {
+          throw new Error("Email and password are required");
         }
+
+        const mockUser = {
+          id: "123",
+          email,
+          username: email.split("@")[0],
+        };
+
+        try {
+          await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(mockUser));
+        } catch (storageError) {
+          console.error("Failed to save user to storage:", storageError);
+          throw new Error("Failed to save login information");
+        }
+
+        setUser(mockUser);
+        return true;
       } catch (error) {
         console.error("Sign in error:", error);
         throw error;
@@ -76,28 +87,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading(false);
       }
     },
-    [router]
+    []
   );
 
   const signUp = useCallback(
-    async (email: string, password: string, username: string) => {
+    async (email: string, password: string, username: string): Promise<boolean> => {
       setIsLoading(true);
       try {
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        if (email.trim() && password.trim() && username.trim()) {
-          const mockUser = {
-            id: "123",
-            email,
-            username,
-          };
-
-          await AsyncStorage.setItem("user", JSON.stringify(mockUser));
-          setUser(mockUser);
-          router.push("/(tabs)/home");
-        } else {
-          throw new Error("Invalid input");
+        if (!email.trim() || !password.trim() || !username.trim()) {
+          throw new Error("All fields are required");
         }
+
+        const mockUser = {
+          id: "123",
+          email,
+          username,
+        };
+
+        try {
+          await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(mockUser));
+        } catch (storageError) {
+          console.error("Failed to save user to storage:", storageError);
+          throw new Error("Failed to save user information");
+        }
+
+        setUser(mockUser);
+        return true;
       } catch (error) {
         console.error("Sign up error:", error);
         throw error;
@@ -105,33 +122,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setIsLoading(false);
       }
     },
-    [router]
+    []
   );
 
-  const signOut = useCallback(async () => {
+  const signOut = useCallback(async (): Promise<boolean> => {
     setIsLoading(true);
     try {
-      await AsyncStorage.removeItem("user");
+      try {
+        await AsyncStorage.removeItem(USER_STORAGE_KEY);
+      } catch (storageError) {
+        console.error("Failed to remove user from storage:", storageError);
+        // Continue with sign out even if storage removal fails
+      }
+      
       setUser(null);
-      router.push("/auth?type=signin");
+      return true;
     } catch (error) {
       console.error("Sign out error:", error);
+      return false;
     } finally {
       setIsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   const forgotPassword = useCallback(
-    async (email: string) => {
+    async (email: string): Promise<boolean> => {
       try {
+        if (!email.trim()) {
+          throw new Error("Email is required");
+        }
+
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        router.push("/auth?type=signin");
+        
+        console.log(`Password reset requested for ${email}`);
+        
+        return true;
       } catch (error) {
         console.error("Forgot password error:", error);
         throw error;
       }
     },
-    [router]
+    []
   );
 
   const value = useMemo(
