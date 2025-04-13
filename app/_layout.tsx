@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import { ToastProvider } from "../src/components/ToastProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
+import LoadingScreen from "../src/components/LoadingScreen";
 
 function ErrorFallback({ error, resetErrorBoundary }: Readonly<FallbackProps>) {
   return (
@@ -33,50 +34,33 @@ function RootLayoutNav() {
 
   useEffect(() => {
     if (isLoading) {
-      // Wait for auth state to be determined
       return;
     }
 
     try {
       const inAuthGroup = segments[0] === "auth";
       const isProtectedRoute = segments[1] === "community" || segments[1] === "profile";
-      const isHomeRoute = segments[1] === "home";
 
-      console.log("Navigation check:", {
-        user: !!user,
-        isProtectedRoute,
-        inAuthGroup,
-        segments
-      });
-
-      // If user is not authenticated
       if (!user) {
         if (isProtectedRoute) {
-          // Redirect to sign in if trying to access protected route
-          router.replace("/auth?type=signin");
+          router.push("/auth?type=signin");
         } else if (inAuthGroup) {
-          // Allow access to auth routes
           return;
         }
-      } 
-      // If user is authenticated
-      else {
-        if (inAuthGroup) {
-          // Redirect to home if trying to access auth routes
-          router.replace("/(tabs)/home");
-        } else if (!segments.length || isHomeRoute) {
-          // Ensure home is the default route
-          router.replace("/(tabs)/home");
-        }
+      } else if (inAuthGroup) {
+        router.push("/(tabs)/home");
+      }
+
+      if (!segments.length) {
+        router.push("/(tabs)/home");
       }
     } catch (error) {
       console.error("Navigation error:", error);
     }
   }, [user, isLoading, segments, router]);
 
-  // Show loading state while auth is being determined
   if (isLoading) {
-    return null; // Or a loading screen component
+    return <LoadingScreen />;
   }
 
   return (

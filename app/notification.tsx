@@ -5,9 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../src/context/AuthContext";
 
 export default function NotificationScreen() {
-  const { user } = useAuth();
 
-  // Mock notification data
   const notifications = [
     {
       id: 1,
