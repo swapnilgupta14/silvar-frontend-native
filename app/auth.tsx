@@ -40,6 +40,8 @@ export default function Auth() {
   const AuthComponent =
     AuthComponents[authType as keyof typeof AuthComponents] || Login;
 
+  console.log("[AuthComponent]", AuthComponent)
+
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <Suspense fallback={<LoadingScreen />}>

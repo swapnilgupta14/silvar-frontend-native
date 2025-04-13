@@ -4,7 +4,7 @@ import LottieView from "lottie-react-native";
 
 export default function LoadingScreen() {
   return (
-    <View className="flex-1 bg-black/90 items-center justify-center">
+    <View className="flex-1 bg-white items-center justify-center">
       <View className="w-64 h-64">
         <LottieView
           source={require("../../assets/lottie/ticket.json")}

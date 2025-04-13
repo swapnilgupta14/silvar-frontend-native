@@ -2,10 +2,22 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { ArrowLeft, Mail } from "lucide-react-native";
+import { useAuth } from "../../context/AuthContext";
 
 export default function ForgotPassword() {
   const router = useRouter();
+  const { forgotPassword } = useAuth();
   const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleResetPassword = async () => {
+    setError(null);
+    try {
+      await forgotPassword(email);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Failed to reset password");
+    }
+  };
 
   return (
     <View className="flex-1 bg-black">
@@ -21,9 +33,15 @@ export default function ForgotPassword() {
             Reset Password
           </Text>
           <Text className="text-sm text-center text-gray-500 mt-2">
-            Enter your phone number to receive a reset code
+            Enter your email to receive a reset link
           </Text>
         </View>
+
+        {error && (
+          <View className="bg-red-50 p-3 rounded-lg mb-4">
+            <Text className="text-red-600 text-center">{error}</Text>
+          </View>
+        )}
 
         <View className="flex flex-col gap-3">
           <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
@@ -40,9 +58,12 @@ export default function ForgotPassword() {
             />
           </View>
 
-          <TouchableOpacity className="bg-black mt-6 rounded-full p-4 shadow-sm">
+          <TouchableOpacity 
+            className="bg-black mt-6 rounded-full p-4 shadow-sm"
+            onPress={handleResetPassword}
+          >
             <Text className="text-white text-center font-semibold text-lg">
-              Send Reset Code
+              Send Reset Link
             </Text>
           </TouchableOpacity>
 

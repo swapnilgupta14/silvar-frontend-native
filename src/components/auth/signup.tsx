@@ -1,21 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Pressable,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import {
-  Eye,
-  EyeOff,
-  Phone,
-  Lock,
-  User,
-  Mail,
-  Check,
-} from "lucide-react-native";
+import { Eye, EyeOff, Lock, User, Mail } from "lucide-react-native";
 import { useAuth } from "../../context/AuthContext";
 
 export default function SignUp() {
@@ -23,22 +9,22 @@ export default function SignUp() {
   const { signUp } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignUp = async () => {
+    setError(null);
     try {
-      await signUp(fullName, email, password);
+      await signUp(email, password, fullName);
     } catch (error) {
-      // Error is already handled by useAuthWithToast
+      setError(error instanceof Error ? error.message : "Failed to sign up");
     }
   };
 
   return (
     <View className="flex-1 bg-black">
-      <View className="h-[30%] items-center py-6 flex justify-center">
+      <View className="h-[42%] items-center py-6 flex justify-center">
         <View className="w-32 h-32 bg-[#2C2C2C] rounded-full items-center justify-center shadow-lg">
           <Text className="text-white text-3xl font-bold">DEI</Text>
         </View>
@@ -50,6 +36,12 @@ export default function SignUp() {
             Create your account
           </Text>
         </View>
+
+        {error && (
+          <View className="bg-red-50 p-3 rounded-lg mb-4">
+            <Text className="text-red-600 text-center">{error}</Text>
+          </View>
+        )}
 
         <View className="flex flex-col gap-4">
           <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
@@ -83,20 +75,6 @@ export default function SignUp() {
 
           <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
             <View className="bg-white/80 p-2 rounded-xl mr-3">
-              <Phone size={20} color="gray" />
-            </View>
-            <TextInput
-              className="flex-1 text-base text-gray-800"
-              placeholder="Phone Number"
-              placeholderTextColor="#9CA3AF"
-              value={phoneNumber}
-              onChangeText={setPhoneNumber}
-              keyboardType="phone-pad"
-            />
-          </View>
-
-          <View className="bg-gray-100 rounded-2xl p-2 flex-row items-center border border-gray-200">
-            <View className="bg-white/80 p-2 rounded-xl mr-3">
               <Lock size={20} color="gray" />
             </View>
             <TextInput
@@ -107,43 +85,17 @@ export default function SignUp() {
               value={password}
               onChangeText={setPassword}
             />
-            <Pressable
+            <TouchableOpacity
               onPress={() => setShowPassword(!showPassword)}
               className="mr-2"
-              disabled={password.length === 0}
             >
               {showPassword ? (
                 <Eye size={20} color="gray" />
               ) : (
                 <EyeOff size={20} color="gray" />
               )}
-            </Pressable>
+            </TouchableOpacity>
           </View>
-
-          <TouchableOpacity
-            className="flex-row items-center my-2"
-            onPress={() => setAgreeToTerms(!agreeToTerms)}
-          >
-            <View
-              className={`w-5 h-5 rounded border mr-2 items-center justify-center ${
-                agreeToTerms ? "bg-black border-black" : "border-gray-400"
-              }`}
-            >
-              {agreeToTerms && (
-                <Check size={12} color="white" strokeWidth={3} />
-              )}
-            </View>
-            <Text className="text-gray-600 flex-1 text-sm">
-              I agree to the{" "}
-              <Text className="text-black font-semibold underline">
-                Terms of Service
-              </Text>{" "}
-              and{" "}
-              <Text className="text-black font-semibold underline">
-                Privacy Policy
-              </Text>
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <TouchableOpacity
