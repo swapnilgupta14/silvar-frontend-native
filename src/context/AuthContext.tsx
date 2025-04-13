@@ -7,6 +7,7 @@ import React, {
   useCallback,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NetInfo from "@react-native-community/netinfo";
 
 type User = {
   id: string;
@@ -24,8 +25,12 @@ type AuthContextType = {
 };
 
 const USER_STORAGE_KEY = "user";
+const MAX_RETRIES = 3;
+const RETRY_DELAY = 1000; // 1 second
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -33,33 +38,49 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await AsyncStorage.getItem(USER_STORAGE_KEY);
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
-      } catch (error) {
-        console.error("Failed to load user data:", error);
+  const loadUserWithRetry = async (retryCount = 0): Promise<void> => {
+    try {
+      const userData = await AsyncStorage.getItem(USER_STORAGE_KEY);
+      if (userData) {
         try {
+          const parsed = JSON.parse(userData);
+          setUser(parsed);
+        } catch (parseError) {
+          console.error("Failed to parse user data:", parseError);
           await AsyncStorage.removeItem(USER_STORAGE_KEY);
-        } catch (clearError) {
-          console.error("Failed to clear corrupted user data:", clearError);
         }
-      } finally {
+      }
+    } catch (error) {
+      console.error(`Failed to load user data (attempt ${retryCount + 1}):`, error);
+      if (retryCount < MAX_RETRIES - 1) {
+        await delay(RETRY_DELAY);
+        return loadUserWithRetry(retryCount + 1);
+      }
+      // Clear potentially corrupted data on final failure
+      await AsyncStorage.removeItem(USER_STORAGE_KEY);
+    } finally {
+      if (retryCount === MAX_RETRIES - 1) {
         setIsLoading(false);
       }
-    };
+    }
+  };
 
-    loadUser();
+  useEffect(() => {
+    loadUserWithRetry();
   }, []);
+
+  const checkNetworkConnection = async (): Promise<void> => {
+    const netInfo = await NetInfo.fetch();
+    if (!netInfo.isConnected) {
+      throw new Error("No internet connection");
+    }
+  };
 
   const signIn = useCallback(
     async (email: string, password: string): Promise<boolean> => {
       setIsLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await checkNetworkConnection();
 
         if (!email.trim() || !password.trim()) {
           throw new Error("Email and password are required");
@@ -81,8 +102,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setUser(mockUser);
         return true;
       } catch (error) {
-        console.error("Sign in error:", error);
-        throw error;
+        if (error instanceof Error) {
+          throw new Error(error.message);
+        }
+        throw new Error("An unexpected error occurred");
       } finally {
         setIsLoading(false);
       }

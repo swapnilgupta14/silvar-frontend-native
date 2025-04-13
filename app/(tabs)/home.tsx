@@ -1,53 +1,20 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Link from "expo-router/link";
 import { useAuth } from "../../src/context/AuthContext";
-import { Ionicons } from "@expo/vector-icons";
-import { useToast } from "../../src/components/ToastProvider";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import Link from "expo-router/link";
 
 export default function HomeScreen() {
   const { user } = useAuth();
-  const { showToast } = useToast();
   const router = useRouter();
 
-  const handleTestToast = () => {
-    showToast('Welcome!', {
-      description: 'You have successfully logged in',
-      type: 'success',
-      image: {
-        type: 'icon',
-        source: 'checkmark-circle-outline'
-      }
-    });
-
-    setTimeout(() => {
-      showToast('New Message', {
-        description: 'You have 3 unread messages',
-        type: 'info',
-        image: {
-          type: 'icon',
-          source: 'mail-outline'
-        }
-      });
-    }, 3500);
-
-    setTimeout(() => {
-      showToast('Error', {
-        description: 'Failed to load data. Please try again.',
-        type: 'error',
-        image: {
-          type: 'icon',
-          source: 'alert-circle-outline'
-        }
-      });
-    }, 7000);
-  };
-
   const handleNotificationPress = () => {
-    router.push('/notification' as any);
+    router.push("/notification");
   };
+
+  const str = ["Category 1", "Category 2", "Category 3", "Category 4"];
 
   return (
     <SafeAreaView className="flex-1 bg-black">
@@ -59,11 +26,15 @@ export default function HomeScreen() {
               {user ? `Hello, ${user?.username}!` : "Welcome"}
             </Text>
             <View className="flex-row space-x-2">
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={handleNotificationPress}
                 className="bg-secondary-bg p-3 rounded-full"
               >
-                <Ionicons name="notifications-outline" size={24} color="#EEEEEE" />
+                <Ionicons
+                  name="notifications-outline"
+                  size={24}
+                  color="#EEEEEE"
+                />
               </TouchableOpacity>
               <Link
                 href={(user ? "/(tabs)/profile" : "/auth?type=signin") as any}
@@ -104,14 +75,15 @@ export default function HomeScreen() {
             Categories
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {["Category 1", "Category 2", "Category 3", "Category 4"].map(
-              (category, index) => (
-                <TouchableOpacity
-                  key={index + category}
+            {str.map((category, index) => (
+              <TouchableOpacity
+                key={index + category}
                   className="bg-secondary-bg rounded-lg p-4 mr-4 w-32 items-center"
                 >
                   <Ionicons name="grid-outline" size={24} color="#76ABAE" />
-                  <Text className="text-off-white mt-2 text-center">{category}</Text>
+                  <Text className="text-off-white mt-2 text-center">
+                    {category}
+                  </Text>
                 </TouchableOpacity>
               )
             )}
@@ -129,9 +101,7 @@ export default function HomeScreen() {
             >
               <View className="w-16 h-16 bg-accent rounded-lg mr-4" />
               <View className="flex-1">
-                <Text className="text-off-white font-bright">
-                  Item {item}
-                </Text>
+                <Text className="text-off-white font-bright">Item {item}</Text>
                 <Text className="text-accent mt-1">
                   Description of item {item}
                 </Text>
