@@ -2,11 +2,9 @@ import "../src/styles/global.css";
 import React, { useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Stack, useRouter, useSegments } from "expo-router";
-import { AuthProvider, useAuth } from "../src/context/AuthContext";
 import { ToastProvider } from "../src/components/ToastProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
-import LoadingScreen from "../src/components/LoadingScreen";
 
 const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
   <View
@@ -33,23 +31,6 @@ const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => (
 );
 
 const RootLayoutNav = () => {
-  const { user } = useAuth();
-  const segments = useSegments();
-  const router = useRouter();
-
-  useEffect(() => {
-    const inAuthGroup = segments[0] === "auth";
-    const isProtectedRoute = segments[1] === "profile" || segments[1] === "community";
-
-    if (!user && isProtectedRoute) {
-      router.push("/login");
-    } else if (user && inAuthGroup) {
-      router.push("/(tabs)/home");
-    } else if (!segments.length) {
-      router.push("/(tabs)/home");
-    }
-  }, [user, segments, router]);
-
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -83,9 +64,7 @@ export default function RootLayout() {
         onReset={() => console.log("Error boundary reset")}
       >
         <ToastProvider>
-          <AuthProvider>
-            <RootLayoutNav />
-          </AuthProvider>
+          <RootLayoutNav />
         </ToastProvider>
       </ErrorBoundary>
     </GestureHandlerRootView>

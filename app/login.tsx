@@ -8,10 +8,6 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSignIn = async () => {
-    return null;
-  };
-
   return (
     <View className="flex-1 bg-black">
       <View className="items-center h-[44%] flex justify-center pb-10">
@@ -81,7 +77,6 @@ export default function Login() {
 
         <TouchableOpacity
           className="mt-6 rounded-full p-4 bg-black shadow-sm"
-          onPress={handleSignIn}
         >
           <Text className="text-white text-center font-semibold text-lg">
             Sign In

@@ -132,15 +132,6 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.release
             
-            // Add these configurations for better production performance
-            minifyEnabled true
-            shrinkResources true
-            crunchPngs true
-            
-            // Add these to ensure proper handling of navigation in release builds
-            ndk {
-                abiFilters "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
-            }
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
