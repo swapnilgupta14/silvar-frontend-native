@@ -37,7 +37,7 @@ export default function HomeScreen() {
                 />
               </TouchableOpacity>
               <Link
-                href={(user ? "/(tabs)/profile" : "/auth?type=signin") as any}
+                href={(user ? "/(tabs)/profile" : "/login") as any}
                 asChild
               >
                 <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">

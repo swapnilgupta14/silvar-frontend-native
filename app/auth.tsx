@@ -1,4 +1,4 @@
-import Login from "../src/components/auth/login";
+import Login from "./login";
 import SignUp from "../src/components/auth/signup";
 import ForgotPassword from "../src/components/auth/forgot-password";
 import { View, Text, TouchableOpacity } from "react-native";

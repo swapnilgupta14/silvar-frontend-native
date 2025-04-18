@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../../src/context/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
 import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Tabs, useRouter, Redirect } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 
 interface ProtectedTabButtonProps
   extends Omit<
@@ -44,7 +44,7 @@ const TabButton = ({
     if (user) {
       router.push(`/(tabs)/${route}` as any);
     } else {
-      router.push("/auth?type=signin");
+      router.push("/login");
     }
   };
 
@@ -52,12 +52,7 @@ const TabButton = ({
 };
 
 export default function TabsLayout() {
-  const { user, isLoading } = useAuth();
-
-  // If still loading, show nothing (parent layout will handle loading state)
-  if (isLoading) {
-    return null;
-  }
+  const { user } = useAuth();
 
   return (
     <Tabs

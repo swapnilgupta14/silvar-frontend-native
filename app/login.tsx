@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
-import { useAuth } from "../../context/AuthContext";
-import Auth from "../../../app/auth";
+import { useAuth } from "../src/context/AuthContext";
 
 export default function Login() {
-  const router = useRouter();
   const { signIn } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
@@ -83,10 +81,7 @@ export default function Login() {
           </View>
         </View>
 
-        <TouchableOpacity
-          onPress={() => Auth("forgot-password")}
-          className="mt-4"
-        >
+        <TouchableOpacity className="mt-4">
           <Text className="text-right text-gray-600 font-normal">
             Forgot Password?
           </Text>
@@ -115,7 +110,7 @@ export default function Login() {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => Auth("signup")}>
+          <TouchableOpacity>
             <Text className="text-black underline font-semibold">Sign Up</Text>
           </TouchableOpacity>
         </View>
