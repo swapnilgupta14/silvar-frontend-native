@@ -87,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const signOut = useCallback(async () => {
     try {
       setUser(null);
-      router.push("/auth?type=signin");
+      router.push("/login");
       return true;
     } catch (error) {
       console.error("Sign out error:", error);

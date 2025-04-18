@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
-import { useAuth } from "../src/context/AuthContext";
 
 export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");

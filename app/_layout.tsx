@@ -42,7 +42,7 @@ const RootLayoutNav = () => {
     const isProtectedRoute = segments[1] === "profile" || segments[1] === "community";
 
     if (!user && isProtectedRoute) {
-      router.push("/auth?type=signin");
+      router.push("/login");
     } else if (user && inAuthGroup) {
       router.push("/(tabs)/home");
     } else if (!segments.length) {

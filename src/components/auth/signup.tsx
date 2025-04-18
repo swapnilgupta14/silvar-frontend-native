@@ -121,7 +121,7 @@ export default function SignUp() {
 
         <View className="flex-row justify-center mt-5">
           <Text className="text-gray-600">Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/auth?type=signin")}>
+          <TouchableOpacity onPress={() => router.push("/login")}>
             <Text className="text-black font-semibold underline">Sign In</Text>
           </TouchableOpacity>
         </View>
