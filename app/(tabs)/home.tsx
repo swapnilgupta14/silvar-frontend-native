@@ -1,13 +1,11 @@
 import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useAuth } from "../../src/context/AuthContext";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Link from "expo-router/link";
 
 export default function HomeScreen() {
-  const { user } = useAuth();
   const router = useRouter();
 
   const handleNotificationPress = () => {
@@ -23,7 +21,7 @@ export default function HomeScreen() {
         <View className="p-4">
           <View className="flex-row justify-between items-center">
             <Text className="text-off-white text-2xl font-bright">
-              {user ? `Hello, ${user?.username}!` : "Welcome"}
+              "Welcome"
             </Text>
             <View className="flex-row space-x-2">
               <TouchableOpacity
@@ -36,10 +34,12 @@ export default function HomeScreen() {
                   color="#EEEEEE"
                 />
               </TouchableOpacity>
-              <Link
-                href={(user ? "/(tabs)/profile" : "/login") as any}
-                asChild
-              >
+              <Link href={"/login"} asChild>
+                <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">
+                  <Ionicons name="person-outline" size={24} color="#EEEEEE" />
+                </TouchableOpacity>
+              </Link>
+              <Link href={"/(tabs)/profile"} asChild>
                 <TouchableOpacity className="bg-secondary-bg p-3 rounded-full">
                   <Ionicons name="person-outline" size={24} color="#EEEEEE" />
                 </TouchableOpacity>
@@ -78,15 +78,14 @@ export default function HomeScreen() {
             {str.map((category, index) => (
               <TouchableOpacity
                 key={index + category}
-                  className="bg-secondary-bg rounded-lg p-4 mr-4 w-32 items-center"
-                >
-                  <Ionicons name="grid-outline" size={24} color="#76ABAE" />
-                  <Text className="text-off-white mt-2 text-center">
-                    {category}
-                  </Text>
-                </TouchableOpacity>
-              )
-            )}
+                className="bg-secondary-bg rounded-lg p-4 mr-4 w-32 items-center"
+              >
+                <Ionicons name="grid-outline" size={24} color="#76ABAE" />
+                <Text className="text-off-white mt-2 text-center">
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </ScrollView>
         </View>
 

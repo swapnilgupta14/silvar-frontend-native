@@ -1,58 +1,9 @@
 import React from "react";
-import { useAuth } from "../../src/context/AuthContext";
 import { FontAwesome } from "@expo/vector-icons";
-import { TouchableOpacity, TouchableOpacityProps } from "react-native";
-import { Tabs, useRouter } from "expo-router";
+import { Tabs } from "expo-router";
 
-interface ProtectedTabButtonProps
-  extends Omit<
-    TouchableOpacityProps,
-    | "delayLongPress"
-    | "disabled"
-    | "onBlur"
-    | "onFocus"
-    | "onLongPress"
-    | "onPressIn"
-    | "onPressOut"
-    | "style"
-  > {
-  user: any;
-  onPress: () => void;
-}
-
-const ProtectedTabButton = ({
-  user,
-  onPress,
-  ...props
-}: ProtectedTabButtonProps) => (
-  <TouchableOpacity {...props} onPress={onPress} />
-);
-
-type TabRoute = "community" | "profile";
-
-const TabButton = ({
-  user,
-  route,
-  ...props
-}: { user: any; route: TabRoute } & Omit<
-  ProtectedTabButtonProps,
-  "user" | "onPress"
->) => {
-  const router = useRouter();
-
-  const handlePress = () => {
-    if (user) {
-      router.push(`/(tabs)/${route}` as any);
-    } else {
-      router.push("/login");
-    }
-  };
-
-  return <ProtectedTabButton {...props} user={user} onPress={handlePress} />;
-};
 
 export default function TabsLayout() {
-  const { user } = useAuth();
 
   return (
     <Tabs
@@ -105,9 +56,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => (
             <FontAwesome name="users" size={24} color={color} />
           ),
-          tabBarButton: (props) => (
-            <TabButton {...props} user={user} route="community" />
-          ),
+          // tabBarButton: (props) => (
+          //   <TabButton {...props} route="community" />
+          // ),
         }}
       />
       <Tabs.Screen
@@ -117,9 +68,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ color }) => (
             <FontAwesome name="user" size={24} color={color} />
           ),
-          tabBarButton: (props) => (
-            <TabButton {...props} user={user} route="profile" />
-          ),
+          // tabBarButton: (props) => (
+          //   <TabButton {...props} route="profile" />
+          // ),
         }}
       />
     </Tabs>

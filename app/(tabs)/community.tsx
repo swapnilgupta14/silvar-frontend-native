@@ -1,24 +1,8 @@
 // src/app/(tabs)/community.tsx
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { useAuth } from '../../src/context/AuthContext';
-import { useRouter } from 'expo-router';
 
 export default function Community() {
-  const { user } = useAuth();
-  const router = useRouter();
-
-  // Additional security to prevent access even if someone bypasses tab routing
-  useEffect(() => {
-    if (!user) {
-      router.push('/login');
-    }
-  }, [user]);
-
-  if (!user) {
-    return null; // Don't render anything while redirecting
-  }
-
   return (
     <ScrollView className="flex-1 bg-black">
       <View className="p-6">
