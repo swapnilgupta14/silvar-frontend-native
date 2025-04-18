@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
 import { useAuth } from "../../context/AuthContext";
+import Auth from "../../../app/auth";
 
 export default function Login() {
   const router = useRouter();
@@ -83,7 +84,7 @@ export default function Login() {
         </View>
 
         <TouchableOpacity
-          onPress={() => router.push("/auth?type=forgot-password")}
+          onPress={() => Auth("forgot-password")}
           className="mt-4"
         >
           <Text className="text-right text-gray-600 font-normal">
@@ -114,7 +115,7 @@ export default function Login() {
 
         <View className="flex-row justify-center mt-6">
           <Text className="text-gray-600">Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push("/auth?type=signup")}>
+          <TouchableOpacity onPress={() => Auth("signup")}>
             <Text className="text-black underline font-semibold">Sign Up</Text>
           </TouchableOpacity>
         </View>
