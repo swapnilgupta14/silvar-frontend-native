@@ -3,7 +3,6 @@ import React from "react";
 import { Stack } from "expo-router";
 import { ToastProvider } from "../src/components/ui/ToastProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import useFonts from "../src/hooks/useFonts";
 
 const RootLayoutNav = () => {
   return (
@@ -11,13 +10,11 @@ const RootLayoutNav = () => {
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{
         headerShown: false,
-        animation: "slide_from_right",
       }} />
       <Stack.Screen
         name="login"
         options={{
           headerShown: false,
-          animation: "slide_from_right",
         }}
       />
       <Stack.Screen
@@ -33,7 +30,6 @@ const RootLayoutNav = () => {
 };
 
 export default function RootLayout() {
-  useFonts();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ToastProvider>
