@@ -2,11 +2,10 @@ name: Android Build
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
-# Add permissions block
 permissions:
   contents: write
   packages: write
@@ -14,73 +13,104 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Install Expo CLI
-      run: npm install -g expo-cli
-    
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'zulu'
-        java-version: '17'
-    
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        jdk-version: '17'
-    
-    - name: Setup Keystore
-      run: |
-        echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/my-release-key.keystore
-        echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/keystore.properties
-        echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/keystore.properties
-        echo "keyAlias=my-key-alias" >> android/keystore.properties
-        echo "storeFile=my-release-key.keystore" >> android/keystore.properties
-    
-    - name: Build Android
-      run: |
-        npx expo prebuild
-        cd android
-        ./gradlew assembleRelease
-    
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: android/app/build/outputs/apk/release/app-release.apk
-        retention-days: 5
-    
-    - name: Create Tag
-      if: github.ref == 'refs/heads/main'
-      id: tag
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        TAG="v$(date +'%Y%m%d-%H%M%S')"
-        git tag -a $TAG -m "Release $TAG"
-        git push origin $TAG
-        echo "tag=$TAG" >> $GITHUB_OUTPUT
-    
-    - name: Create Release
-      if: github.ref == 'refs/heads/main'
-      uses: softprops/action-gh-release@v1
-      with:
-        tag_name: ${{ steps.tag.outputs.tag }}
-        files: android/app/build/outputs/apk/release/app-release.apk
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Cache Node Modules and npm
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies and Expo CLI
+        run: |
+          npm install
+          npm install -g expo-cli
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          jdk-version: "17"
+
+      - name: Cache Gradle and Android Build Cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            ~/.android/build-cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Setup Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > android/app/my-release-key.keystore
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/keystore.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/keystore.properties
+          echo "keyAlias=my-key-alias" >> android/keystore.properties
+          echo "storeFile=my-release-key.keystore" >> android/keystore.properties
+
+      - name: Build Android APK
+        id: build
+        run: |
+          npx expo prebuild
+          cd android
+          ./gradlew assembleRelease
+        env:
+          GRADLE_OPTS: "-Dorg.gradle.daemon=true -Dorg.gradle.parallel=true"
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: android/app/build/outputs/apk/release/app-release.apk
+          retention-days: 5
+
+      - name: Create Tag
+        if: github.ref == 'refs/heads/main' && steps.build.outcome == 'success'
+        id: tag
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          TAG="cilver?v=$(date +'%Y%m%d-%H%M%S')"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main' && steps.build.outcome == 'success'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          files: android/app/build/outputs/apk/release/app-release.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          body: |
+            Automated build via CI/CD pipeline.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: |
+          rm -f android/app/my-release-key.keystore
+          rm -f android/keystore.properties
