@@ -80,12 +80,6 @@ def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInRelea
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
-def keystoreProperties = new Properties()
-def keystorePropertiesFile = rootProject.file('keystore.properties')
-if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-}
-
 android {
     ndkVersion rootProject.ext.ndkVersion
 
@@ -99,11 +93,6 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.1"
-        
-        // Add this for proper handling of deep links and navigation
-        manifestPlaceholders = [
-            'appAuthRedirectScheme': 'com.anonymous.appexpo'
-        ]
     }
     signingConfigs {
         debug {
@@ -112,43 +101,25 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            if (keystorePropertiesFile.exists()) {
-                keyAlias keystoreProperties['keyAlias']
-                keyPassword keystoreProperties['keyPassword']
-                storeFile file(keystoreProperties['storeFile'])
-                storePassword keystoreProperties['storePassword']
-            }
-        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
-            // Enable debugging in debug builds
-            debuggable true
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.release
-            
+            signingConfig signingConfigs.debug
+            shrinkResources (findProperty('android.enableShrinkResourcesInReleaseBuilds')?.toBoolean() ?: false)
+            minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            crunchPngs (findProperty('android.enablePngCrunchInReleaseBuilds')?.toBoolean() ?: true)
         }
     }
     packagingOptions {
         jniLibs {
             useLegacyPackaging (findProperty('expo.useLegacyPackaging')?.toBoolean() ?: false)
         }
-        pickFirst '**/libc++_shared.so'
-        pickFirst '**/libjsc.so'
-        pickFirst '**/libfbjni.so'
-        pickFirst '**/libreactnativejni.so'
-        pickFirst '**/libreactnativeblob.so'
-        pickFirst '**/libreactnativeutilsjni.so'
-        pickFirst '**/libglog.so'
-        pickFirst '**/libhermes.so'
-        pickFirst '**/libhermes-executor-debug.so'
-        pickFirst '**/libhermes-executor-release.so'
     }
     androidResources {
         ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
@@ -202,8 +173,4 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    // Add these dependencies for better navigation support
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "androidx.appcompat:appcompat:1.6.1"
 }

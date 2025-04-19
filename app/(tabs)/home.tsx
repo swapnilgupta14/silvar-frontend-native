@@ -187,7 +187,6 @@ export default function MovieHomeScreen() {
     <SafeAreaView className="flex-1 bg-[#FCFCFC]">
       <StatusBar barStyle="dark-content" />
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Header */}
         <View className="px-6 pt-4 pb-2">
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center">
