@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   Image,
   TextInput,
-  FlatList
 } from 'react-native';
 import { Search as SearchIcon, X, Filter, Star, Play, Clock, Bookmark } from 'lucide-react-native';
 
@@ -131,12 +130,6 @@ export default function Search(): React.JSX.Element {
     <SafeAreaView className="flex-1 bg-[#FCFCFC]">
       <StatusBar barStyle="dark-content" />
       <View className="flex-1 px-6 pt-2">
-        {/* Search Header */}
-        <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-[#05422C] text-2xl font-semibold font-redrose">Search</Text>
-        </View>
-        
-        {/* Search Input */}
         <View className="flex-row items-center bg-[#E0EBE3] rounded-xl px-4 mb-6">
           <SearchIcon stroke="#05422C" size={20} />
           <TextInput

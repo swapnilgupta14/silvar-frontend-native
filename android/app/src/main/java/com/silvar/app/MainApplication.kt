@@ -1,4 +1,4 @@
-package com.anonymous.appexpo
+package com.silvar.app
 
 import android.app.Application
 import android.content.res.Configuration
