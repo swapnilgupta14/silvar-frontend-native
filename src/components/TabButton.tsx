@@ -40,6 +40,7 @@ export const TabButton = ({
 
   const handlePress = () => {
     if (user) {
+      console.log("[User]", user);
       router.push(`/(tabs)/${route}` as any);
     } else {
       router.push("/login");

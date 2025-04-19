@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       fontFamily: {
         bright: ["BrightDemo", "sans-serif"],
+        redrose: ["RedRose-Regular"],
       },
       colors: {
         background: "#222831",

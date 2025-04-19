@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { Eye, EyeOff, Lock, Phone } from "lucide-react-native";
 
-export default function Login() {
+const Login: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -104,4 +104,5 @@ export default function Login() {
       </View>
     </View>
   );
-}
+};
+export default Login;
